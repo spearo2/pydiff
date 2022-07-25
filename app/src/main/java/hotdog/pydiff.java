@@ -3,13 +3,16 @@
  */
 package hotdog;
 
+import hotdog.io.CLI;
+
 public class pydiff {
 
     public static void main(String[] args) {
-        new pydiff().run();
+        new pydiff().run(args);
     }
 
-    public void run() {
+    public void run(String[] args) {
+        new CLI(args);
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
