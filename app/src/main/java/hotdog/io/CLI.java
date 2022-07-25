@@ -60,6 +60,7 @@ public class CLI {
         options.addOption(Option.builder("wp").longOpt("workPath")
                 .desc("Set a path to a cloned project(s)")
                 .argName("Local path where project(s) is cloned")
+                .required()
                 .build());
 
         options.addOption(Option.builder("pc")
