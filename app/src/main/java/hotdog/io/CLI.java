@@ -3,13 +3,11 @@ package hotdog.io;
 import org.apache.commons.cli.*;
 
 public class CLI {
-    private static boolean multiplePairs = false;
-    private static boolean singlePair =false;
+    public static boolean multiplePairs = false;
+    public static boolean singlePair =false;
     private static String csvPath;
     private static String workPath;
-    private static String pc;
-    private static String cpc;
-    private static String proj;
+    private static String[] singlePairInfo;
 
     public CLI (String[] args) {
         Options options = createOptions();
@@ -17,6 +15,10 @@ public class CLI {
             printHelp(options);
         }
     }
+
+    public String getWorkPath() { return workPath; }
+    public String getCsvPath() { return csvPath; }
+    public String[] getSinglePairInfo() { return singlePairInfo; }
 
     private static boolean parseOptions(Options options, String[] args) {
         CommandLineParser parser = new DefaultParser();
@@ -31,9 +33,7 @@ public class CLI {
 
             else if (cmd.hasOption("pc") && cmd.hasOption("cpc") && cmd.hasOption("proj")) {
                 singlePair = true;
-                pc = cmd.getOptionValue("pc");
-                cpc = cmd.getOptionValue("cpc");
-                proj = cmd.getOptionValue("proj");
+                singlePairInfo = new String[] {cmd.getOptionValue("pc"), cmd.getOptionValue("cpc"), cmd.getOptionValue("proj")};
             }
 
             else

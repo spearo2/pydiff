@@ -4,15 +4,27 @@
 package hotdog;
 
 import hotdog.io.CLI;
+import hotdog.io.CSV;
+
+import java.util.ArrayList;
 
 public class pydiff {
+    private String workPath;
 
     public static void main(String[] args) {
         new pydiff().run(args);
     }
 
     public void run(String[] args) {
-        new CLI(args);
+        CLI cli = new CLI(args);
+        workPath = cli.getWorkPath();
+
+        if (cli.multiplePairs) {
+            runMulitplePairs(cli.getCsvPath());
+        }
+        else if (cli.singlePair) {
+            runSinglePair(cli.getSinglePairInfo());
+        }
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
@@ -20,5 +32,14 @@ public class pydiff {
         diff (AST1, AST2)
         analyze. changeAnalyze()
          */
+    }
+
+    private void runMulitplePairs(String csvPath) {
+        // csv read
+        ArrayList<String[]> csvContents = new CSV().readContents(csvPath);
+    }
+
+    private void runSinglePair(String[] singlePairInfo) {
+
     }
 }
