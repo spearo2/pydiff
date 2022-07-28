@@ -3,6 +3,7 @@
  */
 package hotdog;
 
+import hotdog.git.GitInformation;
 import hotdog.io.CLI;
 import hotdog.io.CSV;
 
@@ -19,18 +20,19 @@ public class pydiff {
         CLI cli = new CLI(args);
         workPath = cli.getWorkPath();
 
-        if (cli.multiplePairs) {
-            runMulitplePairs(cli.getCsvPath());
-        }
-        else if (cli.singlePair) {
-            runSinglePair(cli.getSinglePairInfo());
-        }
+//        if (cli.multiplePairs) {
+//            runMulitplePairs(cli.getCsvPath());
+//        }
+//        else if (cli.singlePair) {
+//            runSinglePair(cli.getSinglePairInfo());
+//        }
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
         File.parse
         diff (AST1, AST2)
-        analyze. changeAnalyze()
+        String editscript = analyze. changeAnalyze()
+        String diff = diff().toString()
          */
     }
 
@@ -40,6 +42,6 @@ public class pydiff {
     }
 
     private void runSinglePair(String[] singlePairInfo) {
-
+        new GitInformation().collect(workPath, singlePairInfo);
     }
 }

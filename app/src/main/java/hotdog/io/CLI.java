@@ -11,9 +11,7 @@ public class CLI {
 
     public CLI (String[] args) {
         Options options = createOptions();
-        if(parseOptions(options, args)){
-            printHelp(options);
-        }
+        if(parseOptions(options, args)){ printHelp(options); }
     }
 
     public String getWorkPath() { return workPath; }
@@ -25,19 +23,23 @@ public class CLI {
         try {
             CommandLine cmd = parser.parse(options, args);
 
-            if (cmd.hasOption("csv") && cmd.hasOption("wp")) {
+            workPath = cmd.getOptionValue("wp");
+            System.out.println(workPath);
+            if (workPath.endsWith("/")) workPath = workPath.substring(0, workPath.lastIndexOf("/")-1);
+
+            if (cmd.hasOption("csv")) {
                 multiplePairs = true;
-                workPath = cmd.getOptionValue("wp");
                 csvPath = cmd.getOptionValue("csv");
             }
 
             else if (cmd.hasOption("pc") && cmd.hasOption("cpc") && cmd.hasOption("proj")) {
                 singlePair = true;
-                singlePairInfo = new String[] {cmd.getOptionValue("pc"), cmd.getOptionValue("cpc"), cmd.getOptionValue("proj")};
+                singlePairInfo = new String[]
+                        {cmd.getOptionValue("pc"), cmd.getOptionValue("cpc"), cmd.getOptionValue("proj")};
             }
 
             else
-                throw new Exception("incorrect CLI input");
+                throw new Exception();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,7 +50,6 @@ public class CLI {
     }
 
     private static Options createOptions() {
-
         Options options = new Options();
 
         options.addOption(Option.builder("csv").longOpt("csvPath")
@@ -60,7 +61,7 @@ public class CLI {
         options.addOption(Option.builder("wp").longOpt("workPath")
                 .desc("Set a path to a cloned project(s)")
                 .argName("Local path where project(s) is cloned")
-                .required()
+                .required(true)
                 .build());
 
         options.addOption(Option.builder("pc")
@@ -69,7 +70,7 @@ public class CLI {
                 .build());
 
         options.addOption(Option.builder("cpc")
-                .desc("Set a path to .chg, default: /data/CGYW/chg. This option provides a index.csv, Statistics.txt, and .chg binary file")
+                .desc("")
                 .hasArg()
                 .argName("Change-Prone-Commit hashcode")
                 .build());
@@ -88,9 +89,8 @@ public class CLI {
     }
 
     private static void printHelp(Options options) {
-        // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
-        String header = "AST Change Analyzer";
+        String header = "PyDiff";
         String footer ="\nPlease report issues at https://github.com/GuinZack/pydiff";
         formatter.printHelp("pydiff", header, options, footer, true);
     }
