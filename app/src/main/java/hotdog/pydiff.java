@@ -19,7 +19,7 @@ public class pydiff {
     public void run(String[] args) {
         CLI cli = new CLI(args);
         workPath = cli.getWorkPath();
-
+        System.out.println(workPath);
 //        if (cli.multiplePairs) {
 //            runMulitplePairs(cli.getCsvPath());
 //        }

@@ -24,8 +24,7 @@ public class CLI {
             CommandLine cmd = parser.parse(options, args);
 
             workPath = cmd.getOptionValue("wp");
-            System.out.println(workPath);
-            if (workPath.endsWith("/")) workPath = workPath.substring(0, workPath.lastIndexOf("/")-1);
+            if (workPath.endsWith("/")) workPath = workPath.substring(0, workPath.lastIndexOf("/"));
 
             if (cmd.hasOption("csv")) {
                 multiplePairs = true;
@@ -38,15 +37,12 @@ public class CLI {
                         {cmd.getOptionValue("pc"), cmd.getOptionValue("cpc"), cmd.getOptionValue("proj")};
             }
 
-            else
-                throw new Exception();
-
         } catch (Exception e) {
             e.printStackTrace();
             printHelp(options);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     private static Options createOptions() {
@@ -60,12 +56,14 @@ public class CLI {
 
         options.addOption(Option.builder("wp").longOpt("workPath")
                 .desc("Set a path to a cloned project(s)")
+                .hasArg()
                 .argName("Local path where project(s) is cloned")
                 .required(true)
                 .build());
 
         options.addOption(Option.builder("pc")
                 .desc("Count the number of total changes of a project")
+                .hasArg()
                 .argName("Post-Commit hashcode")
                 .build());
 
