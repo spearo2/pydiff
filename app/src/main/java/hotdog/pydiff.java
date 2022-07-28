@@ -19,13 +19,13 @@ public class pydiff {
     public void run(String[] args) {
         CLI cli = new CLI(args);
         workPath = cli.getWorkPath();
-        System.out.println(workPath);
-//        if (cli.multiplePairs) {
-//            runMulitplePairs(cli.getCsvPath());
-//        }
-//        else if (cli.singlePair) {
-//            runSinglePair(cli.getSinglePairInfo());
-//        }
+
+        if (cli.multiplePairs) {
+            runMulitplePairs(cli.getCsvPath());
+        }
+        else if (cli.singlePair) {
+            runSinglePair(cli.getSinglePairInfo());
+        }
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
@@ -37,11 +37,14 @@ public class pydiff {
     }
 
     private void runMulitplePairs(String csvPath) {
-        // csv read
         ArrayList<String[]> csvContents = new CSV().readContents(csvPath);
+        for (String[] content : csvContents) {
+            String[] fileSources = new GitInformation().collect(workPath, content);
+
+        }
     }
 
     private void runSinglePair(String[] singlePairInfo) {
-        new GitInformation().collect(workPath, singlePairInfo);
+        String[] fileSources = new GitInformation().collect(workPath, singlePairInfo);
     }
 }
