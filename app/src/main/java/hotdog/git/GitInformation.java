@@ -47,10 +47,6 @@ public class GitInformation {
             if (diff.getOldPath().equals(filePath) || diff.getNewPath().equals(filePath)) {
                 srcFileSource = getChangedFileContents(repo, cpcCommit.getId().getName() + "~1", diff.getOldPath());
                 dstFileSource = getChangedFileContents(repo, cpcCommit.getId().getName(), diff.getNewPath());
-                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
-                    formatter.setRepository(repo);
-                    formatter.format(diff);
-                } catch (IOException e) { e.printStackTrace(); }
                 break;
             }
         }
@@ -62,10 +58,10 @@ public class GitInformation {
             if (diff.getOldPath().equals(filePath) || diff.getNewPath().equals(filePath)) {
                 cpcDstFileSource = getChangedFileContents(repo, cpcCommit.getId().getName(), diff.getOldPath());
                 pcDstFileSource = getChangedFileContents(repo, pcCommit.getId().getName(), diff.getNewPath());
-                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
-                    formatter.setRepository(repo);
-                    formatter.format(diff);
-                } catch (IOException e) { e.printStackTrace(); }
+//                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
+//                    formatter.setRepository(repo);
+//                    formatter.format(diff);
+//                } catch (IOException e) { e.printStackTrace(); }
                 break;
             }
         }

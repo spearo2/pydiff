@@ -3,11 +3,18 @@
  */
 package hotdog;
 
+import com.github.gumtreediff.actions.EditScript;
+import hotdog.change.Analyze;
+import hotdog.editScript.GumTree;
 import hotdog.git.GitInformation;
 import hotdog.io.CLI;
 import hotdog.io.CSV;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class pydiff {
     private String workPath;
@@ -26,6 +33,13 @@ public class pydiff {
         else if (cli.singlePair) {
             runSinglePair(cli.getSinglePairInfo());
         }
+
+        for (String key : changeVectorPool.keySet()) {
+            for (String pairInfo : changeVectorPool.get(key)) {
+                System.out.println(pairInfo);
+            }
+            break;
+        }
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
@@ -39,12 +53,36 @@ public class pydiff {
     private void runMulitplePairs(String csvPath) {
         ArrayList<String[]> csvContents = new CSV().readContents(csvPath);
         for (String[] content : csvContents) {
-            String[] fileSources = new GitInformation().collect(workPath, content);
-
+            runSinglePair(content);
         }
     }
 
+    private HashMap<String, String[]> changeVectorPool = new HashMap<>();
+
     private void runSinglePair(String[] singlePairInfo) {
         String[] fileSources = new GitInformation().collect(workPath, singlePairInfo);
+        EditScript editScript = new GumTree().generateEditScript(fileSources);
+        if (editScript == null) return;
+//        System.out.println(editScript.asList());
+        String changeVector = new Analyze().generateChangeVector(editScript);
+        String[] pairInfo = new String[]{singlePairInfo[1], singlePairInfo[2], singlePairInfo[3]};
+        changeVectorPool.put(computeSHA256Hash(changeVector), pairInfo);
+    }
+
+    public String computeSHA256Hash(String hashString) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(hashString.getBytes());
+            byte bytes[] = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for(byte b : bytes){
+                sb.append(Integer.toString((b&0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
