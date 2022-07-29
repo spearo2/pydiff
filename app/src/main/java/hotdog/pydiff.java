@@ -10,6 +10,10 @@ import hotdog.git.GitInformation;
 import hotdog.io.CLI;
 import hotdog.io.CSV;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -36,7 +40,14 @@ public class pydiff {
 
         for (String key : changeVectorPool.keySet()) {
             for (String pairInfo : changeVectorPool.get(key)) {
-                System.out.println(pairInfo);
+                File file = new File("/home/nayeawon/keras-test.txt");
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                    writer.write(pairInfo);
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             break;
         }
