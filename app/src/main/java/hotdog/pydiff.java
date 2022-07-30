@@ -39,8 +39,8 @@ public class pydiff {
         }
 
         for (String key : changeVectorPool.keySet()) {
+            File file = new File("/home/nayeawon/keras-test.txt");
             for (String pairInfo : changeVectorPool.get(key)) {
-                File file = new File("/home/nayeawon/keras-test.txt");
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(file));
                     writer.write(pairInfo);
