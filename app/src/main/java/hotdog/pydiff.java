@@ -42,8 +42,8 @@ public class pydiff {
             File file = new File("/home/nayeawon/keras-test.txt");
             for (String pairInfo : changeVectorPool.get(key)) {
                 try {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-                    writer.write(pairInfo);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+                    writer.write(pairInfo +"\n");
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
