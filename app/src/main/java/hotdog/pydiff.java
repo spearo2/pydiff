@@ -39,18 +39,18 @@ public class pydiff {
         }
 
         int cnt=0;
+        File file = new File("/home/nayeawon/keras-test.txt");
         for (String key : changeVectorPool.keySet()) {
-            File file = new File("/home/nayeawon/keras-test.txt");
             for (String pairInfo : changeVectorPool.get(key)) {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-                    writer.write(pairInfo +"\n");
+                    writer.write(pairInfo + "\n");
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                cnt++;
             }
+            cnt++;
             if (cnt < 30) break;
         }
         /*
