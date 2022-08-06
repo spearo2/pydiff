@@ -43,7 +43,10 @@ public class pydiff {
             for (String pairInfo : changeVectorPool.get(key)) {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+                    writer.write("==============================");
+                    writer.write(key + "\n");
                     writer.write(pairInfo + "\n");
+                    writer.write("==============================");
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -76,7 +79,7 @@ public class pydiff {
 //        System.out.println(editScript.asList());
         String changeVector = new Analyze().generateChangeVector(editScript);
         String[] pairInfo = new String[]{singlePairInfo[1], singlePairInfo[2], singlePairInfo[3]};
-        changeVectorPool.put(computeSHA256Hash(changeVector), pairInfo);
+        changeVectorPool.put(changeVector, pairInfo);
     }
 
     public String computeSHA256Hash(String hashString) {
