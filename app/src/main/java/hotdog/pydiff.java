@@ -38,7 +38,6 @@ public class pydiff {
             runSinglePair(cli.getSinglePairInfo());
         }
 
-        int cnt=0;
         File file = new File("/home/nayeawon/keras-test.txt");
         for (String key : changeVectorPool.keySet()) {
             for (String pairInfo : changeVectorPool.get(key)) {
@@ -50,8 +49,6 @@ public class pydiff {
                     e.printStackTrace();
                 }
             }
-            cnt++;
-            if (cnt < 30) break;
         }
         /*
         cli.parse option
