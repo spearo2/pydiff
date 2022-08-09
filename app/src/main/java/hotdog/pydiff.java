@@ -3,11 +3,22 @@
  */
 package hotdog;
 
+import com.github.gumtreediff.actions.EditScript;
+import hotdog.change.Analyze;
+import hotdog.editScript.GumTree;
 import hotdog.git.GitInformation;
 import hotdog.io.CLI;
 import hotdog.io.CSV;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class pydiff {
     private String workPath;
@@ -20,12 +31,28 @@ public class pydiff {
         CLI cli = new CLI(args);
         workPath = cli.getWorkPath();
 
-//        if (cli.multiplePairs) {
-//            runMulitplePairs(cli.getCsvPath());
-//        }
-//        else if (cli.singlePair) {
-//            runSinglePair(cli.getSinglePairInfo());
-//        }
+        if (cli.multiplePairs) {
+            runMulitplePairs(cli.getCsvPath());
+        }
+        else if (cli.singlePair) {
+            runSinglePair(cli.getSinglePairInfo());
+        }
+
+        File file = new File("/home/nayeawon/keras-test.txt");
+        for (String key : changeVectorPool.keySet()) {
+            for (String pairInfo : changeVectorPool.get(key)) {
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+                    writer.write("==============================");
+                    writer.write(key + "\n");
+                    writer.write(pairInfo + "\n");
+                    writer.write("==============================");
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         /*
         cli.parse option
         GitInformation . get Changed File list according to the commit
@@ -37,11 +64,38 @@ public class pydiff {
     }
 
     private void runMulitplePairs(String csvPath) {
-        // csv read
         ArrayList<String[]> csvContents = new CSV().readContents(csvPath);
+        for (String[] content : csvContents) {
+            runSinglePair(content);
+        }
     }
 
+    private HashMap<String, String[]> changeVectorPool = new HashMap<>();
+
     private void runSinglePair(String[] singlePairInfo) {
-        new GitInformation().collect(workPath, singlePairInfo);
+        String[] fileSources = new GitInformation().collect(workPath, singlePairInfo);
+        EditScript editScript = new GumTree().generateEditScript(fileSources);
+        if (editScript == null) return;
+//        System.out.println(editScript.asList());
+        String changeVector = new Analyze().generateChangeVector(editScript);
+        String[] pairInfo = new String[]{singlePairInfo[1], singlePairInfo[2], singlePairInfo[3]};
+        changeVectorPool.put(changeVector, pairInfo);
+    }
+
+    public String computeSHA256Hash(String hashString) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(hashString.getBytes());
+            byte bytes[] = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for(byte b : bytes){
+                sb.append(Integer.toString((b&0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

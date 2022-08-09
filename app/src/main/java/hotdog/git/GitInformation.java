@@ -24,37 +24,56 @@ public class GitInformation {
     private static DiffAlgorithm diffAlgorithm = DiffAlgorithm.getAlgorithm(DiffAlgorithm.SupportedAlgorithm.MYERS);
     private static RawTextComparator diffComparator = RawTextComparator.WS_IGNORE_ALL;
 
-    public void collect(String workPath, String[] singlePairInfo) {
-        String repoName = singlePairInfo[0];
-        String cpc = singlePairInfo[1];
-        String pc = singlePairInfo[2];
-        String filePath = singlePairInfo[3];
+    public String[] collect(String workPath, String[] pairInfo) {
+        String repoName = pairInfo[0];
+        String cpc = pairInfo[1];
+        String pc = pairInfo[2];
+        String filePath = pairInfo[3];
 
         Repository repo = getRepo(workPath, repoName);
 
-        RevCommit pcCommit = null, cpcCommit = null;
+        RevCommit cpcCommit = null, pcCommit = null;
         try {
-            pcCommit = getCommitById(repo, pc);
             cpcCommit = getCommitById(repo, cpc);
+            pcCommit = getCommitById(repo, pc);
         } catch (IOException e) { e.printStackTrace(); }
 
-        RevCommit parent = pcCommit.getParent(0);
+        RevCommit cpcCommitParent = cpcCommit.getParent(0);
 
-        List<DiffEntry> diffs = diff(parent, pcCommit, repo);
+        // cpc src-dst
+        List<DiffEntry> cpcDiffs = diff(cpcCommitParent, cpcCommit, repo);
         String srcFileSource = "", dstFileSource = "";
-        for (DiffEntry diff : diffs) {
-            if (diff.getNewPath() == filePath) {
-                srcFileSource = getChangedFileContents(repo, pcCommit.getId().getName() + "~1", diff.getOldPath());
-                dstFileSource = getChangedFileContents(repo, pcCommit.getId().getName(), diff.getNewPath());
+        for (DiffEntry diff : cpcDiffs) {
+            if (diff.getOldPath().equals(filePath) || diff.getNewPath().equals(filePath)) {
+                srcFileSource = getChangedFileContents(repo, cpcCommit.getId().getName() + "~1", diff.getOldPath());
+                dstFileSource = getChangedFileContents(repo, cpcCommit.getId().getName(), diff.getNewPath());
                 break;
             }
         }
-        
+
+        //cpc.dst - pc.dst
+        List<DiffEntry> dstDiffs = diff(cpcCommit, pcCommit, repo);
+        String cpcDstFileSource = "", pcDstFileSource = "";
+        for (DiffEntry diff : dstDiffs) {
+            if (diff.getOldPath().equals(filePath) || diff.getNewPath().equals(filePath)) {
+                cpcDstFileSource = getChangedFileContents(repo, cpcCommit.getId().getName(), diff.getOldPath());
+                pcDstFileSource = getChangedFileContents(repo, pcCommit.getId().getName(), diff.getNewPath());
+//                try (DiffFormatter formatter = new DiffFormatter(System.out)) {
+//                    formatter.setRepository(repo);
+//                    formatter.format(diff);
+//                } catch (IOException e) { e.printStackTrace(); }
+                break;
+            }
+        }
+
+        String[] fileSources = new String[]{srcFileSource, dstFileSource, cpcDstFileSource, pcDstFileSource};
+
+        return fileSources;
     }
 
     public Repository getRepo(String workPath, String RepoName) {
         try {
-            File file = new File(workPath + "/" + RepoName + ".git");
+            File file = new File(workPath + "/" + RepoName + "/.git");
 
             Git git;
             if (file.exists()) git = Git.open(file);

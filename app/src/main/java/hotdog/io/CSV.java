@@ -9,14 +9,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CSV {
 
-    enum CSVHeaders {
+    private enum CSVHeaders {
         RepoName, CPC, PC, FilePath
     }
 
     public ArrayList<String[]> readContents(String csvPath){
+
         Reader in = null;
         try {
             in = new FileReader(csvPath);
@@ -25,15 +28,18 @@ public class CSV {
         }
 
         Iterable<CSVRecord> records = null;
+        CSVFormat.Builder builder = CSVFormat.Builder.create();
         try {
-            records = CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build().parse(in);
+            records = builder.setHeader(CSVHeaders.class).build().parse(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         ArrayList<String[]> contents = new ArrayList<>();
 
+        boolean isHeader = true;
         for (CSVRecord record : records) {
+            if (isHeader) { isHeader = false; continue; }
             String RepoName = record.get(CSVHeaders.RepoName);
             String CPC = record.get(CSVHeaders.CPC);
             String PC = record.get(CSVHeaders.PC);

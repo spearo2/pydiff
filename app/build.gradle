@@ -35,6 +35,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.github.gumtreediff/core
     runtimeOnly group: 'com.github.gumtreediff', name: 'core', version: '3.0.0'
+    implementation 'com.github.gumtreediff:core:3.0.0'
 
     // https://mvnrepository.com/artifact/com.github.gumtreediff/client
     implementation group: 'com.github.gumtreediff', name: 'client', version: '3.0.0'
